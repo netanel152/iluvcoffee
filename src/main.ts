@@ -9,6 +9,9 @@ async function bootstrap() {
       whitelist: true, // remove non-whitelisted properties
       transform: true, // automatically transform payloads to DTO instances
       forbidNonWhitelisted: true, // throw an error if non-whitelisted properties are present
+      transformOptions: {
+        enableImplicitConversion: true, // convert query params to their respective types (e.g. ?limit=10 -> { limit: 10 })
+      },
     }),
   );
   await app.listen(3000);

@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Flavor } from './flavor.entity';
 
-@Entity()
+@Entity() // table === 'coffee'
 export class Coffee {
   @PrimaryGeneratedColumn()
   id: number;
@@ -15,12 +15,19 @@ export class Coffee {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  description: string;
+
   @Column()
   brand: string;
 
   @JoinTable()
-  @ManyToMany(type => Flavor, flavor => flavor.coffees, {
-    cascade: true, //or optionally just insert or update ['insert']
-  })
+  @ManyToMany(type => Flavor,
+    flavor => flavor.coffees,
+    {
+      cascade: true, //or optionally just insert or update ['insert']
+    }
+  )
   flavors: Flavor[];
+  recommendations: any;
 }
