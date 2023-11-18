@@ -15,11 +15,14 @@ import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Protocol } from 'src/common/decorators/protocol.decorator';
+import { ApiForbiddenResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('coffees')
 @Controller('coffees')
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) { }
 
+  @ApiOkResponse({ description: 'Returns all coffee.' })
   @Public()
   @Get()
   async findAll(
@@ -36,6 +39,7 @@ export class CoffeesController {
     return this.coffeesService.findOne('' + id);
   }
 
+  @ApiForbiddenResponse()
   @Post()
   create(@Body() createCoffeeDto: CreateCoffeeDto) {
     return this.coffeesService.create(createCoffeeDto);
