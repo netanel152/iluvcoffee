@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { Flavor } from './entities/flavor.entity';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { Event } from '../events/entities/event.entity';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import coffeesConfig from './config/coffees.config';
@@ -22,14 +22,14 @@ export class CoffeesService {
     @Inject(coffeesConfig.KEY)
     private coffeesConfiguration: ConfigType<typeof coffeesConfig>,
   ) {
-    console.log(coffeesConfiguration.shu);
-    const databaseHost = this.configService.get<string>('host.database', 'localhost');
+    const databaseHost = this.configService.get("database.host", "localhost");
     console.log(databaseHost);
+
   }
 
 
 
-  findAll(paginationQuery: PaginationQueryDto) {
+  public findAll(paginationQuery: PaginationQueryDto) {
     const { limit, offset } = paginationQuery;
     return this.coffeeRepository.find({
       relations: {
@@ -40,7 +40,7 @@ export class CoffeesService {
     });
   }
 
-  async findOne(id: string) {
+  public async findOne(id: string) {
     const coffee = await this.coffeeRepository.findOne({
       where: {
         id: +id,
@@ -55,7 +55,7 @@ export class CoffeesService {
     return coffee;
   }
 
-  async create(createCoffeeDto: CreateCoffeeDto) {
+  public async create(createCoffeeDto: CreateCoffeeDto) {
     const flavors = await Promise.all(
       createCoffeeDto.flavors.map((name) => this.preloadFlavorByName(name)),
     );
@@ -66,7 +66,7 @@ export class CoffeesService {
     return this.coffeeRepository.save(coffee);
   }
 
-  async update(id: string, updateCoffeeDto: UpdateCoffeeDto) {
+  public async update(id: string, updateCoffeeDto: UpdateCoffeeDto) {
     const flavors =
       updateCoffeeDto.flavors &&
       (await Promise.all(
@@ -84,12 +84,12 @@ export class CoffeesService {
     return this.coffeeRepository.save(coffee);
   }
 
-  async remove(id: string) {
+  public async remove(id: string) {
     const coffee = await this.findOne(id);
     return this.coffeeRepository.remove(coffee);
   }
 
-  async recommendCoffee(coffee: Coffee) {
+  public async recommendCoffee(coffee: Coffee) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
